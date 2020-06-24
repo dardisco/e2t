@@ -1,0 +1,1479 @@
+\input texinfo
+
+@set NAME e2t
+@set VERSION 0.1
+@set UPDATED June 24, 2020
+@setfilename @value{NAME}
+@finalout
+@c %**start of header
+@settitle @value{NAME} @value{VERSION}
+@syncodeindex pg cp 
+@c %**end of header 
+
+@copying
+This manual is for @value{NAME}, version @value{VERSION}
+Copyright @copyright{} 2020 - Chris Dardis
+@quotation
+
+
+@end quotation
+@end copying
+
+@dircategory Lisp, docs, Tex
+@direntry
+* @value{NAME} (@value{NAME}).Elisp to TexInfo.
+* install-info: (@value{NAME})
+Invoking install-info.
+...
+...
+@end direntry
+@titlepage
+@title @value{NAME}
+@subtitle for version @value{VERSION}, @value{UPDATED}
+@author C. Dardis <christopherdardis@@gmail.com>
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top @value{NAME}
+This manual is for @value{NAME} version @value{VERSION}, @value{UPDATED}
+@end ifnottex
+
+@menu
+* Preamble::
+* defgroup::
+* defun::
+* defcustom::
+* defvar::
+* defconst::
+* define-skeleton::
+* Other symbolic expressions::
+* Index::
+
+@end menu
+
+@node Preamble
+@chapter Preamble
+@cindex Preamble
+
+@code{lexical binding} is @code{t}.@*
+@strong{Copyright}: 2020 - Chris Dardis @*
+@strong{Author}: C. Dardis <christopherdardis@@gmail.com> @*
+@strong{URL}: @uref{http://github.com/dardisco/e2t} @*
+@strong{Version}: 0.1 @*
+@strong{Keywords}: Lisp, docs, Tex @*
+@strong{Package-Requires}: ((subr-x) (tex) (texinfo) (tex-info)) @*
+@strong{News}: 2020 - version 0.1 is the first release. @*
+@strong{Commentary}: Use a single elisp file (`.el') to generate
+ a Texinfo (`.texi') manual.
+ 
+ This is intended to generate simple documentation for a package
+ which is given by a single .el file.
+
+ As most packages consist for the most part of a series of
+ defintions, the documentation is grouped by definition type e.g.
+ `defun', `defvar', `defcustom'. The documentation for this
+ package was produced in this way, i.e. it is self-documenting.
+
+ The package was developed as a way to automate the creation
+ of documentation for elisp packages. The documentation produced is
+ somewhat 'bare bones', although should serve as a useful
+ starting point.
+ Notably, the `.texi' produced does *not* handle cross-references
+ in the same way that the help within Emacs does e.g.
+ referencing another variable or function in help for a function
+ will *not* lead to a corresponding cross reference in
+ the `.texi' documentation.
+
+ Installation:
+
+ This package can be installed using
+
+ (package-install-from-file "/path/to/e2t.el")
+
+ Or place the folliwng in your init.el file:
+
+ (add-to-list 'load-path "~/path/to/directory")
+ (require 'e2t)
+
+ Usage:
+
+ To generate a .texi file use the `e2t' command, as below.
+     M-x e2t-e2t RET
+ To convert this to .pdf, use for example
+ (shell-command "texi2pdf file-name-base.texi")
+
+
+ Variable names:
+ 
+ Function-local/temporary variables are named using
+ as nameNumber e.g. `v1', `beg1'. @*
+@node defgroup
+@chapter defgroup
+@cindex defgroup
+
+Documentation for @code{defgroup}: @*
+Declare SYMBOL as a customization group containing MEMBERS.
+SYMBOL does not need to be quoted.
+
+Third argument DOC is the group documentation.  This should be a short
+description of the group, beginning with a capital and ending with
+a period.  Words other than the first should not be capitalized, if they
+are not usually written so.
+
+MEMBERS should be an alist of the form ((NAME WIDGET)...) where
+NAME is a symbol and WIDGET is a widget for editing that symbol.
+Useful widgets are ‘custom-variable’ for editing variables,
+‘custom-face’ for editing faces, and ‘custom-group’ for editing groups.
+
+The remaining arguments should have the form
+
+   [KEYWORD VALUE]...
+
+For a list of valid keywords, see the common keywords listed in
+‘defcustom’.
+
+See Info node ‘(elisp) Customization’ in the Emacs Lisp manual
+for more information.@*
+
+A table of all @code{defgroup}s follows:
+
+
+@ftable @code
+@item e2t
+
+@end ftable
+
+Details of each @code{defgroup} follow below: @*
+
+@cindex e2t
+@unnumberedsec e2t
+@deffn defgroup e2t
+
+@table @var
+@item custom-group
+((e2t-include-function-code custom-variable) (e2t-headers custom-variable) (e2t-first-defs custom-variable) (e2t-defs custom-variable))
+@item group-documentation
+Elisp to TexInfo.
+This is a series of variables and functions to generate a
+.texi file from a .el file.
+@item custom-prefix
+e2t-
+@item custom-version
+0.1
+@end table
+@end deffn 
+
+@node defun
+@chapter defun
+@cindex defun
+
+Documentation for @code{defun}: @*
+Define NAME as a function.
+The definition is (lambda ARGLIST [DOCSTRING] BODY...).
+See also the function ‘interactive’.
+DECL is a declaration, optional, of the form (declare DECLS...) where
+DECLS is a list of elements of the form (PROP . VALUES).  These are
+interpreted according to ‘defun-declarations-alist’.
+The return value is undefined.
+
+(fn NAME ARGLIST &optional DOCSTRING DECL &rest BODY)@*
+
+A table of all @code{defun}s follows:
+
+
+@ftable @code
+@item e2t-gen-defs
+Generate definitions.
+@item e2t-get-file-name
+The file name from which to generate documentation.
+@item e2t-e2t
+Use an .el file to produce a.texi file and thereafter a .pdf.
+@item e2t-file-display
+Display FILE-NAME.
+@item e2t-el-texi
+Make a .texi file using ‘e2t.fnb’.el.
+@item e2t-get-regexp
+Get REXEXP, one line if SINGLE-LINE is non-nil.
+@item e2t-get-name-first-line
+Get name of package from first line of ‘e2t-fnb’.el.
+@item e2t-insert-headers
+Insert the headers in ‘e2t-headers’.
+@item e2t-check-lexical-binding
+Check if the header line contains ’lexical-binding:t’.
+@item e2t-insert-defs
+Insert definitions, given by ‘e2t-defs’.
+@item e2t-get-sexp
+Get a list of SEXPs from  ‘e2t-fnb’.el.
+@item e2t-table
+Insert LIST as a two-column table into a .texi file.
+@item e2t-insert-defun
+Insert FUNCTION into the file ‘e2t-fnb’.texi.
+@item e2t-replace-at-verbatim
+Replace the text ’[at] end verbatim’ with [at] end verbatim.
+@item e2t-insert-defcustom
+Insert DEFCUSTOM.
+@item e2t-insert-symbol
+Insert SYMBOL.
+@item e2t-insert-symbol-plist
+Insert ‘symbol-plist’ for SYMBOL.
+@item e2t-insert-sexps
+Insert symbolic expressions.
+@end ftable
+
+Details of each @code{defun} follow below: @*
+
+@cindex e2t-gen-defs
+@unnumberedsec e2t-gen-defs
+@defun e2t-gen-defs 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: Generate definitions. 
+Modifies ‘e2t-defs’ (initially empty), 
+ so that it contains the names of all the definitions 
+ for which to look in the .el source file.
+
+@smallformat @verbatim 
+((mapatoms
+  #'(lambda
+      (x)
+      (if
+	  (and
+	   (fboundp x)
+	   (string-prefix-p "def"
+			    (symbol-name x))
+	   (not
+	    (string-prefix-p "default-"
+			     (symbol-name x))))
+	  (progn
+	    (setq e2t-defs
+		  (cons x e2t-defs))))))
+ (set 'e2t-defs
+      (sort e2t-defs
+	    #'(lambda
+		(x y)
+		(string< x y))))
+ (let
+     ((--dolist-tail--
+       (reverse e2t-first-defs)))
+   (while --dolist-tail--
+     (let
+	 ((x
+	   (car --dolist-tail--)))
+       (if
+	   (member x e2t-defs)
+	   (progn
+	     (set 'e2t-defs
+		  (delq x e2t-defs))
+	     (setq e2t-defs
+		   (cons x e2t-defs))))
+       (setq --dolist-tail--
+	     (cdr --dolist-tail--))))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-get-file-name
+@unnumberedsec e2t-get-file-name
+@defun e2t-get-file-name 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: The file name from which to generate documentation.
+If the current buffer is an .el file, return this filename.
+Otherwise, return the newest .el file in the ‘default-directory’.
+
+@smallformat @verbatim 
+((if
+     (equalp "el"
+	     (file-name-extension
+	      (buffer-file-name)))
+     (buffer-file-name)
+   (car
+    (sort
+     (directory-files default-directory nil "^[^\\.].*\\.el$" t)
+     #'file-newer-than-file-p))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-e2t
+@unnumberedsec e2t-e2t
+@defun e2t-e2t 
+Command ? @emph{yes} @*
+Arguments: @emph{none} @*
+Documentation: Use an .el file to produce a.texi file and thereafter a .pdf.
+Uses the most recently modified .el file in the directory.
+Then calls ‘e2t-el-texi’.
+
+@smallformat @verbatim 
+((interactive)
+ (let
+     ((filename1
+       (e2t-get-file-name)))
+   (setq e2t-fnb
+	 (file-name-base filename1))
+   (e2t-file-display filename1)
+   (e2t-file-display
+    (concat e2t-fnb ".texi"))
+   (erase-buffer)
+   (e2t-el-texi)))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-file-display
+@unnumberedsec e2t-file-display
+@defun e2t-file-display 
+Command ? @emph{no} @*
+Arguments: @var{FILE-NAME}  @*
+Documentation: Display FILE-NAME.
+
+@smallformat @verbatim 
+((let
+     ((bn1
+       (car
+	(member FILE-NAME
+		(mapcar 'buffer-name
+			(buffer-list))))))
+   (if bn1
+       (pop-to-buffer bn1)
+     (find-file FILE-NAME))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-el-texi
+@unnumberedsec e2t-el-texi
+@defun e2t-el-texi 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: Make a .texi file using ‘e2t.fnb’.el.
+
+@smallformat @verbatim 
+((e2t-preamble-skeleton e2t-fnb)
+ (e2t-title-skeleton e2t-fnb)
+ (e2t-insert-headers)
+ (e2t-insert-defs)
+ (e2t-insert-sexps)
+ (if
+     (e2t-end-skeleton e2t-fnb)
+     (progn
+       (e2t-replace-at-verbatim)))
+ (if
+     (featurep 'texinfo)
+     (progn
+       (texinfo-master-menu t)))
+ (save-buffer))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-get-regexp
+@unnumberedsec e2t-get-regexp
+@defun e2t-get-regexp 
+Command ? @emph{no} @*
+Arguments: @var{REGEXP}  @*
+Documentation: Get REXEXP, one line if SINGLE-LINE is non-nil.
+
+@smallformat @verbatim 
+((let
+     ((code1 nil)
+      (beg1 nil)
+      (end1 nil)
+      (res1 nil))
+   (save-current-buffer
+     (set-buffer
+      (concat e2t-fnb ".el"))
+     (save-excursion
+       (goto-char
+	(point-min))
+       (search-forward-regexp "^;+ ?Code:$" nil t)
+       (setq code1
+	     (line-beginning-position))
+       (goto-char
+	(point-min)))
+     (save-excursion
+       (goto-char
+	(point-min))
+       (if
+	   (search-forward-regexp
+	    (concat e2t-header-prefix REGEXP)
+	    code1 t)
+	   (progn
+	     (setq beg1
+		   (line-beginning-position)
+		   end1 code1)
+	     (if
+		 (search-forward-regexp
+		  (mapconcat
+		   #'(lambda
+		       (y)
+		       (concat e2t-header-prefix y))
+		   (remove REGEXP e2t-headers)
+		   "\\|")
+		  end1 t)
+		 (progn
+		   (setq end1
+			 (line-beginning-position))))
+	     (setq res1
+		   (buffer-substring-no-properties beg1 end1))
+	     (setq res1
+		   (string-trim
+		    (replace-regexp-in-string "^;+" "" res1))
+		   res1
+		   (replace-regexp-in-string "@" "@@" res1))
+	     (if
+		 (equalp REGEXP
+			 (substring res1 0
+				    (length REGEXP)))
+		 (progn
+		   (setq res1
+			 (string-trim
+			  (substring res1
+				     (length REGEXP)))
+			 res1
+			 (string-trim
+			  (replace-regexp-in-string "^:" "" res1)))))))))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-get-name-first-line
+@unnumberedsec e2t-get-name-first-line
+@defun e2t-get-name-first-line 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: Get name of package from first line of ‘e2t-fnb’.el.
+
+@smallformat @verbatim 
+((save-current-buffer
+   (set-buffer
+    (concat e2t-fnb ".el"))
+   (save-excursion
+     (goto-char
+      (point-min))
+     (search-forward-regexp
+      (concat e2t-header-prefix ".*--+")
+      (line-end-position)
+      t)
+     (setq beg1
+	   (point))
+     (search-forward-regexp "\\. "
+			    (line-end-position)
+			    t)
+     (string-trim
+      (buffer-substring-no-properties beg1
+				      (point))))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-insert-headers
+@unnumberedsec e2t-insert-headers
+@defun e2t-insert-headers 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: Insert the headers in ‘e2t-headers’.
+
+@smallformat @verbatim 
+((e2t-node-skeleton "Preamble")
+ (if
+     (e2t-check-lexical-binding)
+     (progn
+       (insert "@code{lexical binding} is @code{t}.@*\n")))
+ (save-current-buffer
+   (set-buffer
+    (concat e2t-fnb ".texi"))
+   (let
+       ((--dolist-tail-- e2t-headers))
+     (while --dolist-tail--
+       (let
+	   ((x
+	     (car --dolist-tail--)))
+	 (setq res1
+	       (e2t-get-regexp x))
+	 (if res1
+	     (progn
+	       (insert
+		(concat "@strong{"
+			(if
+			    (equalp x "[^\n]+free software")
+			    "License" x)
+			"}: "
+			(if
+			    (string-match "URL" x)
+			    (concat "@uref{" res1 "}")
+			  res1)
+			" @*\n"))))
+	 (setq --dolist-tail--
+	       (cdr --dolist-tail--))))
+     res1)))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-check-lexical-binding
+@unnumberedsec e2t-check-lexical-binding
+@defun e2t-check-lexical-binding 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: Check if the header line contains ’lexical-binding:t’.
+Applies to the file ‘e2t-fnb’.el.
+
+@smallformat @verbatim 
+((save-current-buffer
+   (set-buffer
+    (concat e2t-fnb ".el"))
+   (save-excursion
+     (goto-char
+      (point-min))
+     (if
+	 (search-forward "lexical-binding:t"
+			 (line-end-position)
+			 t)
+	 t nil))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-insert-defs
+@unnumberedsec e2t-insert-defs
+@defun e2t-insert-defs 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: Insert definitions, given by ‘e2t-defs’.
+
+@smallformat @verbatim 
+((let
+     ((x nil)
+      (y nil)
+      (fun1 nil)
+      (i nil))
+   (let
+       ((--dolist-tail-- e2t-defs))
+     (while --dolist-tail--
+       (let
+	   ((x
+	     (car --dolist-tail--)))
+	 (setq y
+	       (e2t-get-sexp x))
+	 (if
+	     (>=
+	      (length y)
+	      1)
+	     (progn
+	       (save-current-buffer
+		 (set-buffer
+		  (concat e2t-fnb ".texi"))
+		 (e2t-node-skeleton
+		  (format "%s" x))
+		 (insert
+		  (concat "Documentation for @code{"
+			  (format "%s" x)
+			  "}: @*\n"
+			  (documentation x)
+			  "@*\n\n" "A table of all @code{"
+			  (format "%s" x)
+			  "}s follows:\n\n"))
+		 (e2t-table y)
+		 (insert
+		  (concat "Details of each @code{"
+			  (format "%s" x)
+			  "} follow below: @*\n\n"))
+		 (setq fun1
+		       (cond
+			((eq x
+			     (or 'defun 'defsubst))
+			 'e2t-insert-defun)
+			((eq x 'defcustom)
+			 'e2t-insert-defcustom)
+			(t 'e2t-insert-symbol)))
+		 (let
+		     ((--dolist-tail-- y))
+		   (while --dolist-tail--
+		     (let
+			 ((i
+			   (car --dolist-tail--)))
+		       (insert
+			(concat "@cindex "
+				(format "%s"
+					(car
+					 (cdr i)))
+				"\n" "@unnumberedsec "
+				(format "%s"
+					(car
+					 (cdr i)))
+				"\n"))
+		       (funcall fun1 i)
+		       (setq --dolist-tail--
+			     (cdr --dolist-tail--))))))))
+	 (setq --dolist-tail--
+	       (cdr --dolist-tail--)))))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-get-sexp
+@unnumberedsec e2t-get-sexp
+@defun e2t-get-sexp 
+Command ? @emph{no} @*
+Arguments: @var{SEXP}  @*
+Documentation: Get a list of SEXPs from  ‘e2t-fnb’.el.
+
+@smallformat @verbatim 
+((save-current-buffer
+   (set-buffer
+    (concat e2t-fnb ".el"))
+   (save-excursion
+     (goto-char
+      (point-min))
+     (search-forward-regexp "^;+ ?Code.+\n" nil t)
+     (let
+	 ((res1 'nil))
+       (while
+	   (not
+	    (=
+	     (point)
+	     (point-max)))
+	 (condition-case err
+	     (forward-sexp)
+	   ((debug error)
+	    (message "Error in (forward-sexp): %S" err)
+	    nil))
+	 (if
+	     (eq SEXP
+		 (car
+		  (sexp-at-point)))
+	     (progn
+	       (setq res1
+		     (cons
+		      (sexp-at-point)
+		      res1)))))
+       (nreverse res1)))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-table
+@unnumberedsec e2t-table
+@defun e2t-table 
+Command ? @emph{no} @*
+Arguments: @var{LIST}  @*
+Documentation: Insert LIST as a two-column table into a .texi file.
+For functions, the table is given as @@ftable @@code.
+For variables, the table is given as @@vtable @@var.
+
+@smallformat @verbatim 
+(nil
+ (let
+     ((table1
+       (if
+	   (fboundp
+	    (car
+	     (car LIST)))
+	   '("ftable" "code")
+	 '("vtable" "var"))))
+   (insert
+    (concat "\n@"
+	    (car table1)
+	    " @"
+	    (car
+	     (cdr table1))
+	    "\n"))
+   (while LIST
+     (setq v1
+	   (car-safe
+	    (prog1 LIST
+	      (setq LIST
+		    (cdr LIST)))))
+     (setq v2
+	   (if
+	       (fboundp
+		(car
+		 (cdr v1)))
+	       (documentation
+		(car
+		 (cdr v1)))
+	     (documentation-property
+	      (car
+	       (cdr v1))
+	      'variable-documentation)))
+     (if v2
+	 (progn
+	   (setq v2
+		 (format "%s"
+			 (car
+			  (split-string v2 "\n" t " "))))))
+     (insert
+      (concat "@item "
+	      (format "%s"
+		      (car
+		       (cdr v1)))
+	      "\n"
+	      (if v2 v2 "")
+	      "\n")))
+   (insert
+    (concat "@end "
+	    (car table1)
+	    "\n\n"))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-insert-defun
+@unnumberedsec e2t-insert-defun
+@defun e2t-insert-defun 
+Command ? @emph{no} @*
+Arguments: @var{FUNCTION}  @*
+Documentation: Insert FUNCTION into the file ‘e2t-fnb’.texi.
+
+@smallformat @verbatim 
+((let*
+     ((name1
+       (format "%s"
+	       (car
+		(cdr FUNCTION))))
+      (fun1
+       (car
+	(cdr FUNCTION)))
+      (args1
+       (help-function-arglist fun1 t))
+      (com1
+       (commandp fun1))
+      (doc1
+       (documentation fun1))
+      (sf1
+       (symbol-function fun1))
+      (fc1
+       (if e2t-include-function-code
+	   (pp
+	    (if
+		(stringp
+		 (elt sf1 3))
+		(cdr
+		 (cdr
+		  (cdr
+		   (cdr sf1))))
+	      (cdr
+	       (cdr
+		(cdr sf1)))))
+	 nil)))
+   (save-current-buffer
+     (set-buffer
+      (concat e2t-fnb ".texi"))
+     (insert
+      (concat "@defun " name1 " \n"))
+     (insert
+      (concat "Command ? "
+	      (if com1 "@emph{yes}" "@emph{no}")
+	      " @*\n"))
+     (insert "Arguments: ")
+     (if
+	 (not args1)
+	 (insert "@emph{none}")
+       (while args1
+	 (setq name1
+	       (car-safe
+		(prog1 args1
+		  (setq args1
+			(cdr args1)))))
+	 (insert
+	  (if
+	      (eq name1 '&optional)
+	      "@code{&optional} "
+	    (concat "@var{"
+		    (format "%s" name1)
+		    "} ")))))
+     (insert " @*\n")
+     (insert
+      (concat "Documentation: "
+	      (if
+		  (not doc1)
+		  "@emph{Not documented.} @*\n\n"
+		(concat doc1 "\n\n"))))
+     (if fc1
+	 (progn
+	   (insert
+	    (concat "@smallformat @verbatim \n" fc1 "@ end verbatim \n @end smallformat \n"))))
+     (insert "@end defun \n\n"))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-replace-at-verbatim
+@unnumberedsec e2t-replace-at-verbatim
+@defun e2t-replace-at-verbatim 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: Replace the text ’[at] end verbatim’ with [at] end verbatim.
+Here, [at] is the at symbol, @@.
+This is done for text appearing *inside* a verbatim envinronment,
+to avoid escaping the environment before we mean to do so.
+
+@smallformat @verbatim 
+((save-current-buffer
+   (set-buffer
+    (concat e2t-fnb ".texi"))
+   (save-excursion
+     (goto-char
+      (point-min))
+     (while
+	 (search-forward-regexp "^ *@smallformat @verbatim" nil t)
+       (let
+	   ((end1 nil))
+	 (save-excursion
+	   (search-forward-regexp "^ *@ end verbatim")
+	   (setq end1
+		 (line-beginning-position)))
+	 (save-excursion
+	   (while
+	       (search-forward "@ end verbatim" end1 t)
+	     (replace-match "@ end verbatim")
+	     (setq end1
+		   (+ end1 1)))
+	   (search-forward-regexp "^ *@ end verbatim")))))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-insert-defcustom
+@unnumberedsec e2t-insert-defcustom
+@defun e2t-insert-defcustom 
+Command ? @emph{no} @*
+Arguments: @var{DEFCUSTOM}  @*
+Documentation: Insert DEFCUSTOM.
+
+@smallformat @verbatim 
+((insert
+  (concat "@defopt "
+	  (format "%s"
+		  (car
+		   (cdr DEFCUSTOM))
+		  "\n\n")))
+ (save-excursion
+   (e2t-insert-symbol-plist DEFCUSTOM)
+   (insert "\n@end defopt \n\n"))
+ (save-excursion
+   (while
+       (search-forward-regexp "\\(:\\)\\([a-z-]+\\)" nil t)
+     (replace-match "@code{:\\2}")))
+ (search-forward "@end defopt \n\n"))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-insert-symbol
+@unnumberedsec e2t-insert-symbol
+@defun e2t-insert-symbol 
+Command ? @emph{no} @*
+Arguments: @var{SYMBOL}  @*
+Documentation: Insert SYMBOL.
+
+@smallformat @verbatim 
+((insert
+  (concat "@deffn "
+	  (format "%s"
+		  (car SYMBOL))
+	  " "
+	  (format "%s"
+		  (car
+		   (cdr SYMBOL)))
+	  "\n"))
+ (e2t-insert-symbol-plist SYMBOL)
+ (insert "\n@end deffn \n\n"))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-insert-symbol-plist
+@unnumberedsec e2t-insert-symbol-plist
+@defun e2t-insert-symbol-plist 
+Command ? @emph{no} @*
+Arguments: @var{SYMBOL}  @*
+Documentation: Insert ‘symbol-plist’ for SYMBOL.
+
+@smallformat @verbatim 
+((let
+     ((x
+       (symbol-plist
+	(car
+	 (cdr SYMBOL)))))
+   (if x
+       (progn
+	 (insert "\n@table @var\n")
+	 (if
+	     (fboundp
+	      (car
+	       (cdr SYMBOL)))
+	     (progn
+	       (insert
+		(concat "@item Documentation:\n"
+			(documentation
+			 (car
+			  (cdr SYMBOL)))
+			"\n"))))
+	 (while x
+	   (insert
+	    (concat "@item "
+		    (format "%s"
+			    (car-safe
+			     (prog1 x
+			       (setq x
+				     (cdr x)))))
+		    "\n"
+		    (format "%s"
+			    (car-safe
+			     (prog1 x
+			       (setq x
+				     (cdr x)))))
+		    "\n")))
+	 (insert "@end table")))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@cindex e2t-insert-sexps
+@unnumberedsec e2t-insert-sexps
+@defun e2t-insert-sexps 
+Command ? @emph{no} @*
+Arguments: @emph{none} @*
+Documentation: Insert symbolic expressions.
+Excludes the definitions in ‘e2t-defs’.
+
+@smallformat @verbatim 
+((let
+     ((x)
+      (sexp1 nil))
+   (save-current-buffer
+     (set-buffer
+      (concat e2t-fnb ".el"))
+     (goto-char
+      (point-min))
+     (search-forward-regexp "^;+ ?Code:$" nil t)
+     (forward-line 1)
+     (while
+	 (<
+	  (point)
+	  (point-max))
+       (condition-case err
+	   (forward-sexp)
+	 ((debug error)
+	  (message "Error in (forward-sexp): %S" err)
+	  nil))
+       (setq x
+	     (sexp-at-point))
+       (if
+	   (member
+	    (car x)
+	    e2t-defs)
+	   nil
+	 (setq sexp1
+	       (cons x sexp1)))))
+   (if sexp1
+       (progn
+	 (save-current-buffer
+	   (set-buffer
+	    (concat e2t-fnb ".texi"))
+	   (e2t-node-skeleton "Other symbolic expressions")
+	   (insert "@smallformat @verbatim \n")
+	   (let
+	       ((--dolist-tail--
+		 (nreverse sexp1)))
+	     (while --dolist-tail--
+	       (let
+		   ((x
+		     (car --dolist-tail--)))
+		 (if x
+		     (progn
+		       (insert
+			(concat
+			 (pp x)
+			 "\n"))))
+		 (setq --dolist-tail--
+		       (cdr --dolist-tail--)))))
+	   (insert "@ end verbatim \n @end smallformat \n"))))))
+@end verbatim 
+ @end smallformat 
+@end defun 
+
+@node defcustom
+@chapter defcustom
+@cindex defcustom
+
+Documentation for @code{defcustom}: @*
+Declare SYMBOL as a customizable variable.
+SYMBOL is the variable name; it should not be quoted.
+STANDARD is an expression specifying the variable’s standard
+value.  It should not be quoted.  It is evaluated once by
+‘defcustom’, and the value is assigned to SYMBOL if the variable
+is unbound.  The expression itself is also stored, so that
+Customize can re-evaluate it later to get the standard value.
+DOC is the variable documentation.
+
+This macro uses ‘defvar’ as a subroutine, which also marks the
+variable as "special", so that it is always dynamically bound
+even when ‘lexical-binding’ is t.
+
+The remaining arguments to ‘defcustom’ should have the form
+
+   [KEYWORD VALUE]...
+
+The following keywords are meaningful:
+
+:type	VALUE should be a widget type for editing the symbol’s value.
+	Every ‘defcustom’ should specify a value for this keyword.
+:options VALUE should be a list of valid members of the widget type.
+:initialize
+	VALUE should be a function used to initialize the
+	variable.  It takes two arguments, the symbol and value
+	given in the ‘defcustom’ call.  The default is
+	‘custom-initialize-reset’.
+:set	VALUE should be a function to set the value of the symbol
+	when using the Customize user interface.  It takes two arguments,
+	the symbol to set and the value to give it.  The function should
+	not modify its value argument destructively.  The default choice
+	of function is ‘set-default’.
+:get	VALUE should be a function to extract the value of symbol.
+	The function takes one argument, a symbol, and should return
+	the current value for that symbol.  The default choice of function
+	is ‘default-value’.
+:require
+	VALUE should be a feature symbol.  If you save a value
+	for this option, then when your init file loads the value,
+	it does (require VALUE) first.
+:set-after VARIABLES
+	Specifies that SYMBOL should be set after the list of variables
+        VARIABLES when both have been customized.
+:risky	Set SYMBOL’s ‘risky-local-variable’ property to VALUE.
+:safe	Set SYMBOL’s ‘safe-local-variable’ property to VALUE.
+        See Info node ‘(elisp) File Local Variables’.
+
+The following common keywords are also meaningful.
+
+:group  VALUE should be a customization group.
+        Add SYMBOL (or FACE with ‘defface’) to that group.
+:link LINK-DATA
+        Include an external link after the documentation string for this
+        item.  This is a sentence containing an active field which
+        references some other documentation.
+
+        There are several alternatives you can use for LINK-DATA:
+
+        (custom-manual INFO-NODE)
+             Link to an Info node; INFO-NODE is a string which specifies
+             the node name, as in "(emacs)Top".
+
+        (info-link INFO-NODE)
+             Like ‘custom-manual’ except that the link appears in the
+             customization buffer with the Info node name.
+
+        (url-link URL)
+             Link to a web page; URL is a string which specifies the URL.
+
+        (emacs-commentary-link LIBRARY)
+             Link to the commentary section of LIBRARY.
+
+        (emacs-library-link LIBRARY)
+             Link to an Emacs Lisp LIBRARY file.
+
+        (file-link FILE)
+             Link to FILE.
+
+        (function-link FUNCTION)
+             Link to the documentation of FUNCTION.
+
+        (variable-link VARIABLE)
+             Link to the documentation of VARIABLE.
+
+        (custom-group-link GROUP)
+             Link to another customization GROUP.
+
+        You can specify the text to use in the customization buffer by
+        adding ‘:tag NAME’ after the first element of the LINK-DATA; for
+        example, (info-link :tag "foo" "(emacs)Top") makes a link to the
+        Emacs manual which appears in the buffer as ‘foo’.
+
+        An item can have more than one external link; however, most items
+        have none at all.
+:version
+        VALUE should be a string specifying that the variable was
+        first introduced, or its default value was changed, in Emacs
+        version VERSION.
+:package-version
+        VALUE should be a list with the form (PACKAGE . VERSION)
+        specifying that the variable was first introduced, or its
+        default value was changed, in PACKAGE version VERSION.  This
+        keyword takes priority over :version.  For packages which
+        are bundled with Emacs releases, the PACKAGE and VERSION
+        must appear in the alist ‘customize-package-emacs-version-alist’.
+        Since PACKAGE must be unique and the user might see it in an
+        error message, a good choice is the official name of the
+        package, such as MH-E or Gnus.
+:tag LABEL
+        Use LABEL, a string, instead of the item’s name, to label the item
+        in customization menus and buffers.
+:load FILE
+        Load file FILE (a string) before displaying this customization
+        item.  Loading is done with ‘load’, and only if the file is
+        not already loaded.
+
+If SYMBOL has a local binding, then this form affects the local
+binding.  This is normally not what you want.  Thus, if you need
+to load a file defining variables with this form, or with
+‘defvar’ or ‘defconst’, you should always load that file
+_outside_ any bindings for these variables.  (‘defvar’ and
+‘defconst’ behave similarly in this respect.)
+
+See Info node ‘(elisp) Customization’ in the Emacs Lisp manual
+for more information.@*
+
+A table of all @code{defcustom}s follows:
+
+
+@ftable @code
+@item e2t-include-function-code
+Include source code for functions, if non-nil.
+@item e2t-headers
+Headers to look for in the preabmle of an .el file.
+@item e2t-first-defs
+Definitions, given as symbols, to appear first in the .texi file.
+@item e2t-defs
+A list of definitions in the .el source file.
+@end ftable
+
+Details of each @code{defcustom} follow below: @*
+
+@cindex e2t-include-function-code
+@unnumberedsec e2t-include-function-code
+@defopt e2t-include-function-code
+@table @var
+@item standard-value
+((funcall (function (closure (t) nil t))))
+@item custom-type
+(radio (const @code{:doc} Yes (include function code) @code{:value} t) (const @code{:doc} No (do not include function code) @code{:value} nil))
+@item custom-requests
+nil
+@item variable-documentation
+Include source code for functions, if non-nil.
+@end table
+@end defopt 
+
+@cindex e2t-headers
+@unnumberedsec e2t-headers
+@defopt e2t-headers
+@table @var
+@item standard-value
+((funcall (function (closure (t) nil (quote (Filename Description Copyright Author Maintainer Homepage URL EmacsWiki X-URL Doc URL URL (GIT mirror) Created Package-Version Version Last-Updated Keywords Compatibility Package-Version Package-Requires License [^
+]+free software News Commentary Wishlist Prior Art Notes Compatibility and Requirements Bugs TODO Change Log))))))
+@item custom-type
+(repeat (regexp @code{:tag} expression))
+@item custom-links
+((info-link (elisp) Packaging) (info-link (elisp) Simple Packages) (info-link (elisp)Packaging))
+@item custom-requests
+nil
+@item variable-documentation
+Headers to look for in the preabmle of an .el file.
+The file should specify a single package.
+
+'Preamble' means the text between the beginning of the file
+and "`e2t-header-prefix'Code:",
+which should all be commented.
+
+As the use of headers is not enforced rigidly,
+they appear in conventional order for
+a typical single-file package.  The list is not exhaustive, but
+taken from examples from a variety of packages.
+
+Although these are all regular expressions, the only one which
+uses this syntax is "[^
+]+free software", which is done as
+the software license is often given without a preceding heading.
+
+All headers are matched by prefixing them with `e2t-header-prefix'.
+These values are used by `e2t-insert-headers'.
+@end table
+@end defopt 
+
+@cindex e2t-first-defs
+@unnumberedsec e2t-first-defs
+@defopt e2t-first-defs
+@table @var
+@item standard-value
+((funcall (function (closure (t) nil (quote (defgroup define-major-mode define-minor-mode defmacro defun defsubst defcustom defvar defconst define-skeleton))))))
+@item custom-type
+(repeat symbol)
+@item safe-local-variable
+fboundp
+@item custom-requests
+nil
+@item variable-documentation
+Definitions, given as symbols, to appear first in the .texi file. 
+These should reflect, in order of priority,
+the most important definitions in a typical package.
+These are used by `e2t-gen-defs'.
+By default, additional definitions in the package will appear after these,
+in alphabetical order.
+@end table
+@end defopt 
+
+@cindex e2t-defs
+@unnumberedsec e2t-defs
+@defopt e2t-defs
+@table @var
+@item standard-value
+((funcall (function (closure (t) nil (quote nil)))))
+@item custom-type
+(repeat symbol)
+@item safe-local-variable
+fboundp
+@item custom-requests
+nil
+@item variable-documentation
+A list of definitions in the .el source file. 
+from which to generate the .texi documentation. 
+By default, this is set when the package is loaded by `e2t-gen-defs'.
+@end table
+@end defopt 
+
+@node defvar
+@chapter defvar
+@cindex defvar
+
+Documentation for @code{defvar}: @*
+Define SYMBOL as a variable, and return SYMBOL.
+You are not required to define a variable in order to use it, but
+defining it lets you supply an initial value and documentation, which
+can be referred to by the Emacs help facilities and other programming
+tools.  The ‘defvar’ form also declares the variable as "special",
+so that it is always dynamically bound even if ‘lexical-binding’ is t.
+
+If SYMBOL’s value is void and the optional argument INITVALUE is
+provided, INITVALUE is evaluated and the result used to set SYMBOL’s
+value.  If SYMBOL is buffer-local, its default value is what is set;
+buffer-local values are not affected.  If INITVALUE is missing,
+SYMBOL’s value is not set.
+
+If SYMBOL has a local binding, then this form affects the local
+binding.  This is usually not what you want.  Thus, if you need to
+load a file defining variables, with this form or with ‘defconst’ or
+‘defcustom’, you should always load that file _outside_ any bindings
+for these variables.  (‘defconst’ and ‘defcustom’ behave similarly in
+this respect.)
+
+The optional argument DOCSTRING is a documentation string for the
+variable.
+
+To define a user option, use ‘defcustom’ instead of ‘defvar’.
+
+(fn SYMBOL &optional INITVALUE DOCSTRING)@*
+
+A table of all @code{defvar}s follows:
+
+
+@ftable @code
+@item e2t-fnb
+The ‘file-name-base’ (a string) for the working file in ‘mp-dd’.
+@end ftable
+
+Details of each @code{defvar} follow below: @*
+
+@cindex e2t-fnb
+@unnumberedsec e2t-fnb
+@deffn defvar e2t-fnb
+
+@table @var
+@item variable-documentation
+The `file-name-base' (a string) for the working file in `mp-dd'.
+Set when `e2t-e2t' is run.
+Defined here as a dynamic variable so that
+various functions can use this value.
+@end table
+@end deffn 
+
+@node defconst
+@chapter defconst
+@cindex defconst
+
+Documentation for @code{defconst}: @*
+Define SYMBOL as a constant variable.
+This declares that neither programs nor users should ever change the
+value.  This constancy is not actually enforced by Emacs Lisp, but
+SYMBOL is marked as a special variable so that it is never lexically
+bound.
+
+The ‘defconst’ form always sets the value of SYMBOL to the result of
+evalling INITVALUE.  If SYMBOL is buffer-local, its default value is
+what is set; buffer-local values are not affected.  If SYMBOL has a
+local binding, then this form sets the local binding’s value.
+However, you should normally not make local bindings for variables
+defined with this form.
+
+The optional DOCSTRING specifies the variable’s documentation string.
+
+(fn SYMBOL INITVALUE [DOCSTRING])@*
+
+A table of all @code{defconst}s follows:
+
+
+@ftable @code
+@item e2t-header-prefix
+Prefix used before a header.
+@end ftable
+
+Details of each @code{defconst} follow below: @*
+
+@cindex e2t-header-prefix
+@unnumberedsec e2t-header-prefix
+@deffn defconst e2t-header-prefix
+
+@table @var
+@item variable-documentation
+Prefix used before a header.
+This is combined with the regular expressions of `e2t-headers'.
+@item risky-local-variable
+t
+@end table
+@end deffn 
+
+@node define-skeleton
+@chapter define-skeleton
+@cindex define-skeleton
+
+Documentation for @code{define-skeleton}: @*
+Define a user-configurable COMMAND that enters a statement skeleton.
+DOCUMENTATION is that of the command.
+SKELETON is as defined under ‘skeleton-insert’.@*
+
+A table of all @code{define-skeleton}s follows:
+
+
+@ftable @code
+@item e2t-preamble-skeleton
+Insert preamble for a texi file.
+@item e2t-title-skeleton
+Insert title.
+@item e2t-node-skeleton
+Insert a node, str.
+@item e2t-end-skeleton
+Insert Index and closing code to a .texi file.
+@end ftable
+
+Details of each @code{define-skeleton} follow below: @*
+
+@cindex e2t-preamble-skeleton
+@unnumberedsec e2t-preamble-skeleton
+@deffn define-skeleton e2t-preamble-skeleton
+
+@table @var
+@item Documentation:
+Insert preamble for a texi file.
+
+This is a skeleton command (see ‘skeleton-insert’).
+Normally the skeleton text is inserted at point, with nothing "inside".
+If there is a highlighted region, the skeleton text is wrapped
+around the region text.
+
+A prefix argument ARG says to wrap the skeleton around the next ARG words.
+A prefix argument of -1 says to wrap around region, even if not highlighted.
+A prefix argument of zero says to wrap around zero words---that is, nothing.
+This is a way of overriding the use of a highlighted region.
+@item no-self-insert
+t
+@end table
+@end deffn 
+
+@cindex e2t-title-skeleton
+@unnumberedsec e2t-title-skeleton
+@deffn define-skeleton e2t-title-skeleton
+
+@table @var
+@item Documentation:
+Insert title.
+
+This is a skeleton command (see ‘skeleton-insert’).
+Normally the skeleton text is inserted at point, with nothing "inside".
+If there is a highlighted region, the skeleton text is wrapped
+around the region text.
+
+A prefix argument ARG says to wrap the skeleton around the next ARG words.
+A prefix argument of -1 says to wrap around region, even if not highlighted.
+A prefix argument of zero says to wrap around zero words---that is, nothing.
+This is a way of overriding the use of a highlighted region.
+@item no-self-insert
+t
+@end table
+@end deffn 
+
+@cindex e2t-node-skeleton
+@unnumberedsec e2t-node-skeleton
+@deffn define-skeleton e2t-node-skeleton
+
+@table @var
+@item Documentation:
+Insert a node, str.
+
+This is a skeleton command (see ‘skeleton-insert’).
+Normally the skeleton text is inserted at point, with nothing "inside".
+If there is a highlighted region, the skeleton text is wrapped
+around the region text.
+
+A prefix argument ARG says to wrap the skeleton around the next ARG words.
+A prefix argument of -1 says to wrap around region, even if not highlighted.
+A prefix argument of zero says to wrap around zero words---that is, nothing.
+This is a way of overriding the use of a highlighted region.
+@item no-self-insert
+t
+@end table
+@end deffn 
+
+@cindex e2t-end-skeleton
+@unnumberedsec e2t-end-skeleton
+@deffn define-skeleton e2t-end-skeleton
+
+@table @var
+@item Documentation:
+Insert Index and closing code to a .texi file.
+
+This is a skeleton command (see ‘skeleton-insert’).
+Normally the skeleton text is inserted at point, with nothing "inside".
+If there is a highlighted region, the skeleton text is wrapped
+around the region text.
+
+A prefix argument ARG says to wrap the skeleton around the next ARG words.
+A prefix argument of -1 says to wrap around region, even if not highlighted.
+A prefix argument of zero says to wrap around zero words---that is, nothing.
+This is a way of overriding the use of a highlighted region.
+@item no-self-insert
+t
+@end table
+@end deffn 
+
+@node Other symbolic expressions
+@chapter Other symbolic expressions
+@cindex Other symbolic expressions
+
+@smallformat @verbatim 
+(mapc #'require
+      '(subr-x tex texinfo tex-info))
+
+(eval-after-load 'e2t
+  (funcall 'e2t-gen-defs))
+
+(provide 'e2t)
+
+@end verbatim 
+ @end smallformat 
+@node Index
+@unnumbered Index
+@printindex cp
+@bye 
+
+@c Local Variables:
+@c mode: texinfo
+@c TeX-master: t
+@c End
