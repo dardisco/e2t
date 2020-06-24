@@ -39,7 +39,7 @@ Or place the folliwng in your init.el file:
 ### Usage
 
 To generate a .texi file use the `e2t` command, as below.
-    M-x e2t-e2t RET
+     M-x e2t-e2t RET
 To convert this to .pdf, use for example
 (shell-command "texi2pdf file-name-base.texi")
 
