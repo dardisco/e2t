@@ -8,7 +8,7 @@ Use a single elisp file (`.el`) to generate
 a Texinfo (`.texi`) manual.
  
 This is intended to generate simple documentation for a package
-which is given by a single .el file.
+which is given by a single `.el` file.
 
 As most packages consist for the most part of a series of
 defintions, the documentation is grouped by definition type e.g.
@@ -31,7 +31,7 @@ This package can be installed using
 
     (package-install-from-file "/path/to/e2t.el")
 
-Or place the folliwng in your init.el file:
+Or place the folliwng in your `init.el` file:
 
     (add-to-list 'load-path "~/path/to/directory")
     (require 'e2t)
@@ -42,7 +42,7 @@ To generate a .texi file use the `e2t` command, as below.
      
 	 M-x e2t-e2t RET
 	 
-To convert this to .pdf, use for example
+To convert this to `.pdf`, use for example
 
     (shell-command "texi2pdf file-name-base.texi")
 
